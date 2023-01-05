@@ -47,3 +47,18 @@ impl Board{
     }
 
 }
+
+
+impl fmt::Display for Board {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut board_string = "".to_owned();
+        for row in 0..8 {
+            for col in 0..8 {
+                board_string += self.tiles[col][7 - row].to_string().as_str();
+            }
+            board_string += "\n";
+        }
+        write!(f, "{}", board_string)
+    }
+}
+
