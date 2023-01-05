@@ -46,6 +46,39 @@ impl Board{
         }
     }
 
+    pub fn get_tile(&self, point: Point) -> Tile {
+        self.tiles[point.col as usize][point.row as usize]
+    }
+
+    pub fn get_brick(&self, point: Point) -> Brick {
+        match self.get_tile(point) {
+            Tile::Brick(brick) => brick,
+            Empty => panic!("No brick at {:?}", point),
+        }
+    }
+
+    fn remove_brick(&mut self, point: Point) {
+        self.tiles[point.col as usize][point.row as usize] = Tile::Empty;
+    }
+    fn place_brick(&mut self, point: Point, brick: Brick) {
+        self.tiles[point.col as usize][point.row as usize] = Tile::Brick(brick);
+    }
+
+    fn is_take_move(from: Point, to: Point) -> bool {
+        (to.row - from.row).abs() == 2
+    }
+
+    pub fn move_brick(&mut self, from: Point, to: Point) {
+        let brick = self.get_brick(from);
+        self.remove_brick(from);
+        self.place_brick(to, brick);
+        if Board::is_take_move(from, to){
+            let mut mid_point = from;
+            mid_point.step_towards(to);
+            self.remove_brick(mid_point);
+        }
+    }
+
 }
 
 
