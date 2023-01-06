@@ -5,20 +5,27 @@ use tile::Player;
 use board::Board;
 
 struct Turn{
-    last_to_point: Point,
+    last_from: Point,
+    last_to: Point,
 }
 
 impl Turn{
 
     pub fn new() -> Self {
         Self {
-            last_to_point: Point::new(-1, -1),
+            last_from: Point::new(-1, -1),
+            last_to: Point::new(-1, -1),
         }
     }
 
-    pub fn set_to_point(&mut self, to_point: Point) {
-        self.last_to_point = to_point;
+    pub fn set_last_move(&mut self, from: Point, to: Point) {
+        self.last_from = from;
+        self.last_to = to;
     }
+
+    //can_current_turn_move
+    //has_current_made_move
+    //is_current_turn_done
 
     pub fn get_player_turn(&mut self, board: &Board) -> Player {
         //let brick_player_type = board.get_brick(self.last_to_point);

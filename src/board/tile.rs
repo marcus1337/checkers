@@ -1,29 +1,69 @@
-
-use std::ops::{Add,Sub};
+use std::ops::{Add, AddAssign, Sub};
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub enum BrickType{
+pub enum Direction {
+    NorthWest,
+    NorthEast,
+    SouthWest,
+    SouthEast,
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub enum BrickType {
     Pawn,
     King,
 }
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub enum Player{
+pub enum Player {
     One,
     Two,
 }
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub enum Brick{
-    PlayerBrick(Player, BrickType)
+pub enum Brick {
+    PlayerBrick(Player, BrickType),
+}
+
+impl Brick {
+    pub fn is_same_player(&self, other: Brick) -> bool {
+        match (self, other) {
+            (Brick::PlayerBrick(p1, _), Brick::PlayerBrick(p2, _)) => p1 == &p2,
+            _ => false,
+        }
+    }
+
+    fn has_player(&self, player: Player) -> bool {
+        match self {
+            Brick::PlayerBrick(self_player, _) => self_player == &player,
+        }
+    }
+
+    pub fn can_step_in_direction(&self, direction: Direction) -> bool {
+        let has_king = match self {
+            Brick::PlayerBrick(_, brick_type) => brick_type == &BrickType::King
+        };
+        
+        if has_king {
+            return true;
+        }
+
+        match direction {
+            Direction::NorthEast => self.has_player(Player::One),
+            Direction::NorthWest => self.has_player(Player::One),
+            Direction::SouthEast => self.has_player(Player::Two),
+            Direction::SouthWest => self.has_player(Player::Two),
+        }
+    }
 }
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub enum Tile{
+pub enum Tile {
     Empty,
     Brick(Brick),
 }
@@ -43,24 +83,36 @@ impl Tile {
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub struct Point{
+pub struct Point {
     pub col: i32,
     pub row: i32,
 }
 
-impl Point{
-
+impl Point {
     pub fn new(col: i32, row: i32) -> Self {
-        Self{
-            col:col, row:row
-        }
+        Self { col: col, row: row }
+    }
+
+    pub fn double_step(&mut self, direction: Direction) {
+        self.step(direction);
+        self.step(direction);
+    }
+
+    pub fn step(&mut self, direction: Direction) {
+        let direction_point = match direction {
+            Direction::NorthEast => Point::new(-1, 1),
+            Direction::NorthWest => Point::new(1, 1),
+            Direction::SouthEast => Point::new(-1, -1),
+            Direction::SouthWest => Point::new(1, -1),
+        };
+        *self += direction_point;
     }
 
     pub fn in_bounds(&self) -> bool {
         self.col >= 0 && self.col < 8 && self.row >= 0 && self.row < 8
     }
 
-    pub fn step_towards(&mut self, other: Point){
+    pub fn step_towards(&mut self, other: Point) {
         if self.col < other.col {
             self.col += 1;
         } else if self.col > other.col {
@@ -72,7 +124,6 @@ impl Point{
             self.row += 1;
         }
     }
-
 }
 
 impl Add for Point {
@@ -88,3 +139,9 @@ impl Sub for Point {
     }
 }
 
+impl AddAssign for Point {
+    fn add_assign(&mut self, other: Self) {
+        self.col += other.col;
+        self.row += other.row;
+    }
+}
