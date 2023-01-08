@@ -34,11 +34,17 @@ impl Action{
     }
 
     pub fn get_actions(board: &Board, from: Point) -> Vec<Action> {
-        let mut actions = Vec::<Action>::new();
-        for to in validate::get_possible_end_points(board, from) {
-            actions.push(Action::new(from, to));
-        }
-        actions
+        validate::get_possible_end_points(board, from)
+        .into_iter()
+        .map(|to| Action::new(from, to))
+        .collect()
+    }
+
+    pub fn get_jump_actions(board: &Board, from: Point) -> Vec<Action> {
+        Action::get_actions(board, from)
+        .into_iter()
+        .filter(|action| action.is_jump())
+        .collect()
     }
 
 }
