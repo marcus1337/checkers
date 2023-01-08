@@ -7,10 +7,15 @@ pub mod turn;
 use self::turn::Turn;
 use self::action::Action;
 use self::turn::move_validator;
+use board::tile::BrickType;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use board::tile::Point;
 use board::tile::Direction;
+use board::tile::Brick;
+use board::GameResult;
+use board::tile::Player;
+use board::Board;
 
 #[repr(C)]
 pub struct Checkers {
@@ -23,6 +28,56 @@ impl Checkers{
     pub extern "C" fn checkers_make() -> Self {
         Self {
             turn: Turn::new(),
+        }
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_reset(&mut self) {
+        *self = Checkers::checkers_make();
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_get_result(&self) -> GameResult {
+        let actions = move_validator::get_valid_actions(&self.turn);
+        if actions.is_empty() {
+            match self.turn.player {
+                Player::One => return GameResult::TwoWin,
+                Player::Two => return GameResult::OneWin,
+            }
+        }
+        GameResult::OnGoing
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_is_started(&self) -> bool {
+        self.turn.board != Board::new()
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_get_player_turn(&self) -> Player {
+        self.turn.player
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_has_brick(&self, point: Point) -> bool {
+        self.turn.board.has_brick(point)
+    }
+    #[no_mangle]
+    pub extern "C" fn checkers_get_brick(&self, point: Point) -> Brick {
+        self.turn.board.get_brick(point)
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_get_player_of_brick(brick: Brick) -> Player {
+        match brick {
+            Brick::PlayerBrick(player,_) => player
+        }
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_get_type_of_brick(brick: Brick) -> BrickType {
+        match brick {
+            Brick::PlayerBrick(_, brick_type) => brick_type
         }
     }
 

@@ -18,7 +18,7 @@ pub enum GameResult {
 }
 
 #[repr(C)]
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Board{
     tiles: [[Tile; 8]; 8],
 }
