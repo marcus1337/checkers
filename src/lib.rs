@@ -6,12 +6,11 @@ pub mod action;
 pub mod turn;
 use self::turn::Turn;
 use self::action::Action;
-use self::board::Board;
-use self::turn::move_executor;
 use self::turn::move_validator;
-use board::tile::Direction;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use board::tile::Point;
+use board::tile::Direction;
 
 #[repr(C)]
 pub struct Checkers {
@@ -25,6 +24,17 @@ impl Checkers{
         Self {
             turn: Turn::new(),
         }
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_can_move(&self, from: Point, direction: Direction) -> bool {
+        move_validator::can_step_or_jump(&self.turn, from, direction)
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_get_action(&self, from: Point, direction: Direction) -> Action {
+        let actions = move_validator::get_valid_actions(&self.turn);
+        actions.iter().find(|&action| action.from == from && action.get_direction() == direction).unwrap().clone()
     }
 
     #[no_mangle]
