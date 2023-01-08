@@ -8,14 +8,13 @@ use self::turn::Turn;
 use self::action::Action;
 use self::turn::move_validator;
 use board::tile::BrickType;
-use rand::seq::SliceRandom;
-use rand::thread_rng;
 use board::tile::Point;
 use board::tile::Direction;
 use board::tile::Brick;
 use board::GameResult;
 use board::tile::Player;
 use board::Board;
+use ai::AI;
 
 #[repr(C)]
 pub struct Checkers {
@@ -94,10 +93,7 @@ impl Checkers{
 
     #[no_mangle]
     pub extern "C" fn checkers_get_ai_action(&self) -> Action {
-        let actions = move_validator::get_valid_actions(&self.turn);
-        let mut rng = thread_rng();
-        let random_action = actions.choose(&mut rng).unwrap();
-        random_action.clone()
+        AI::new().get_action(&self.turn)
     }
 
     #[no_mangle]

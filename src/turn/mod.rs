@@ -1,6 +1,5 @@
 
 pub mod move_validator;
-pub mod move_executor;
 
 use super::action::Action;
 use super::board::tile::Player;
