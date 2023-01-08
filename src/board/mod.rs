@@ -7,7 +7,6 @@ use tile::Tile;
 use tile::Brick;
 use tile::BrickType;
 use tile::Player;
-use tile::Direction;
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -47,12 +46,33 @@ impl Board{
         }
     }
 
+    pub fn get_tile_points() -> [Point; 64] {
+        let mut points = [Point::new(0,0); 64];
+        let mut index = 0;
+        for col in 0..8 {
+            for row in 0..8 {
+                points[index] = Point::new(col, row);
+                index += 1;
+            }
+        }
+        return points;
+    }
+
     pub fn get_tile(&self, point: Point) -> Tile {
         self.tiles[point.col as usize][point.row as usize]
     }
 
     pub fn has_brick(&self, point: Point) -> bool {
         self.get_tile(point) != Tile::Empty
+    }
+
+    pub fn has_player_brick(&self, point: Point, player: Player) -> bool {
+        if !self.has_brick(point) {
+            return false;
+        }
+        match self.get_brick(point) {
+            Brick::PlayerBrick(p, _) => p == player,
+        }
     }
 
     pub fn get_brick(&self, point: Point) -> Brick {

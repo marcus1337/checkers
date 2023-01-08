@@ -2,12 +2,12 @@
 use super::board::tile::Direction;
 use super::board::tile::Point;
 use super::board::Board;
-use super::board::tile::Tile;
 use super::board::tile::Brick;
 use super::board::tile::BrickType;
 use super::board::tile::Player;
 mod validate;
 
+#[repr(C)]
 #[derive(Copy, Clone, Debug)]
 pub struct Action{
     pub from: Point,
@@ -35,6 +35,7 @@ impl Action{
     pub fn is_step(&self) -> bool {
         (self.to.row - self.from.row).abs() == 1
     }
+
     pub fn is_jump(&self) -> bool {
         !self.is_step()
     } 
@@ -47,6 +48,13 @@ impl Action{
         validate::get_possible_end_points(board, from)
         .into_iter()
         .map(|to| Action::new(board, from, to))
+        .collect()
+    }
+
+    pub fn get_step_actions(board: &Board, from: Point) -> Vec<Action> {
+        Action::get_actions(board, from)
+        .into_iter()
+        .filter(|action| action.is_step())
         .collect()
     }
 

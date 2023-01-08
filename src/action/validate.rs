@@ -1,8 +1,6 @@
 use super::Board;
 use super::Direction;
-use super::Player;
 use super::Point;
-use super::Tile;
 
 fn can_step(board: &Board, to: Point) -> bool {
     if !to.in_bounds() {

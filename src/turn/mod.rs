@@ -1,16 +1,21 @@
 
+pub mod move_validator;
+pub mod move_executor;
 
 use super::action::Action;
 use super::board::tile::Player;
 use super::board::Board;
-use super::board::GameResult;
+use super::board;
+use super::board::tile::Point;
 
+#[repr(C)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum TurnState {
     Start,
     InProgress,
 }
 
+#[repr(C)]
 #[derive(Copy, Clone, Debug)]
 pub struct Turn {
     pub player: Player,
@@ -51,8 +56,8 @@ impl Turn {
         }
     }
 
-    pub fn get_jump_action_continuations(&self) -> Vec<Action> {
-        Action::get_jump_actions(&self.board, self.potentially_last_jump_action.to)
+    pub fn get_jump_action_continuation_point(&self) -> Point {
+        self.potentially_last_jump_action.to
     }
 
     fn set_last_jump_action(&mut self, last_action: Action) {
