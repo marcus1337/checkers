@@ -1,3 +1,4 @@
+
 use std::ops::{Add, AddAssign, Sub};
 
 #[repr(C)]
@@ -7,6 +8,12 @@ pub enum Direction {
     NorthEast,
     SouthWest,
     SouthEast,
+}
+
+impl Direction {
+    pub fn all () -> [Direction; 4] {
+        [Direction::NorthWest, Direction::NorthEast, Direction::SouthWest, Direction::SouthEast]
+    }
 }
 
 #[repr(C)]
@@ -32,8 +39,7 @@ pub enum Brick {
 impl Brick {
     pub fn is_same_player(&self, other: Brick) -> bool {
         match (self, other) {
-            (Brick::PlayerBrick(p1, _), Brick::PlayerBrick(p2, _)) => p1 == &p2,
-            _ => false,
+            (Brick::PlayerBrick(p1, _), Brick::PlayerBrick(p2, _)) => p1 == &p2
         }
     }
 
@@ -93,7 +99,7 @@ impl Point {
         Self { col: col, row: row }
     }
 
-    pub fn double_step(&mut self, direction: Direction) {
+    pub fn jump(&mut self, direction: Direction) {
         self.step(direction);
         self.step(direction);
     }
@@ -122,6 +128,18 @@ impl Point {
             self.row -= 1;
         } else if self.row < other.row {
             self.row += 1;
+        }
+    }
+
+    pub fn get_direction(from: Point, to: Point) -> Direction {
+        let col_diff = to.col - from.col;
+        let row_diff = to.row - from.row;
+        match (row_diff.signum(), col_diff.signum()) {
+            (-1, -1) => Direction::SouthWest,
+            (-1, 1) => Direction::SouthEast,
+            (1, -1) => Direction::NorthWest,
+            (1, 1) => Direction::NorthEast,
+            _ => panic!("Invalid move: from = ({}, {}), to = ({}, {})", from.row, from.col, to.row, to.col),
         }
     }
 }

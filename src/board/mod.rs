@@ -51,66 +51,22 @@ impl Board{
         self.tiles[point.col as usize][point.row as usize]
     }
 
+    pub fn has_brick(&self, point: Point) -> bool {
+        self.get_tile(point) != Tile::Empty
+    }
+
     pub fn get_brick(&self, point: Point) -> Brick {
         match self.get_tile(point) {
             Tile::Brick(brick) => brick,
-            Empty => panic!("No brick at {:?}", point),
+            Tile::Empty => panic!("No brick at {:?}", point),
         }
     }
 
-    fn remove_brick(&mut self, point: Point) {
+    pub fn remove_brick(&mut self, point: Point) {
         self.tiles[point.col as usize][point.row as usize] = Tile::Empty;
     }
-    fn place_brick(&mut self, point: Point, brick: Brick) {
+    pub fn place_brick(&mut self, point: Point, brick: Brick) {
         self.tiles[point.col as usize][point.row as usize] = Tile::Brick(brick);
-    }
-
-    fn is_take_move(from: Point, to: Point) -> bool {
-        (to.row - from.row).abs() == 2
-    }
-
-    pub fn can_jump_brick(&self, from: Point, direction: Direction) -> bool{
-        let from_brick = self.get_brick(from);
-        if !from_brick.can_step_in_direction(direction){
-            return false;
-        }
-
-        let mut to = from;
-        to.step(direction);
-        let mid_point = to;
-        to.step(direction);
-
-        let mid_point_has_brick = mid_point.in_bounds() && self.get_tile(mid_point) != Tile::Empty;
-        let to_point_is_empty = to.in_bounds() && self.get_tile(to) == Tile::Empty;
-        if !mid_point_has_brick || !to_point_is_empty{
-            return false
-        } 
-        let mid_brick = self.get_brick(mid_point);        
-        !mid_brick.is_same_player(from_brick)
-    }
-
-    pub fn can_move_or_jump_brick(&self, from: Point, direction: Direction) -> bool {
-        self.can_jump_brick(from, direction) || self.can_move_brick(from, direction)
-    }
-
-    pub fn can_move_brick(&self, from: Point, direction: Direction) -> bool{
-        if !self.get_brick(from).can_step_in_direction(direction){
-            return false;
-        }
-        let mut to = from;
-        to.step(direction);
-        to.in_bounds() && self.get_tile(to) == Tile::Empty
-    }
-
-    pub fn move_brick(&mut self, from: Point, to: Point) {
-        let brick = self.get_brick(from);
-        self.remove_brick(from);
-        self.place_brick(to, brick);
-        if Board::is_take_move(from, to){
-            let mut mid_point = from;
-            mid_point.step_towards(to);
-            self.remove_brick(mid_point);
-        }
     }
 
 }

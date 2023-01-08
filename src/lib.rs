@@ -2,6 +2,7 @@
 extern crate libc;
 pub mod board;
 pub mod ai;
+pub mod action;
 use self::board::Board;
 
 #[repr(C)]
