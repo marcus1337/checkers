@@ -33,7 +33,7 @@ impl Action{
         Point::get_direction(self.from, self.to)
     }
 
-    pub fn get_actions(board: &Board, from: Point) -> Vec<Action> {
+    fn get_actions(board: &Board, from: Point) -> Vec<Action> {
         validate::get_possible_end_points(board, from)
         .into_iter()
         .map(|to| Action::new(from, to))
@@ -45,6 +45,36 @@ impl Action{
         .into_iter()
         .filter(|action| action.is_jump())
         .collect()
+    }
+
+    pub fn is_promoting(&self, board: &Board) -> bool {
+        let from_brick = board.get_brick(self.from);
+        match from_brick {
+            Brick::PlayerBrick(Player::One, BrickType::Pawn) => self.to.row == 7,
+            Brick::PlayerBrick(Player::Two, BrickType::Pawn) => self.to.row == 0,
+            _ => false
+        }
+    }
+
+    pub fn promote(&self, board: &mut Board) {
+        let from_brick = board.get_brick(self.from);
+        let king_brick = match from_brick {
+            Brick::PlayerBrick(player, _) => Brick::PlayerBrick(player, BrickType::King),
+        };
+        board.place_brick(self.to, king_brick);
+    }
+
+    pub fn apply(&self, board: &mut Board) {
+        let from_brick = board.get_brick(self.from);
+        board.place_brick(self.to, from_brick);
+        if self.is_jump() {
+            let mut middle = self.from;
+            middle.step_towards(self.to);
+            board.remove_brick(middle);
+        }
+        if self.is_promoting(board) {
+            self.promote(board);
+        }
     }
 
 }
