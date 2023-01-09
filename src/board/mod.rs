@@ -27,17 +27,15 @@ impl Board{
 
     pub fn new() -> Self {
         let mut tiles = [[Tile::Empty; 8]; 8];
-        for col in 0..4 {
-            for row in 0..3 {
-                let mut piece_col_one = col*2;
-                let mut piece_col_two = piece_col_one;
-                if row % 2 == 0 {
-                    piece_col_one += 1;
-                }else{
-                    piece_col_two += 1;
-                }
-                tiles[piece_col_one][row] = Tile::Brick(Brick::PlayerBrick(Player::One, BrickType::Pawn));
-                tiles[piece_col_two][7-row] = Tile::Brick(Brick::PlayerBrick(Player::One, BrickType::Pawn));
+
+        for point in Board::get_tile_points() {
+            let col = point.col as usize;
+            let row = point.row as usize;
+            if point.row < 3 {
+                tiles[col][row] = Tile::Brick(Brick::PlayerBrick(Player::One, BrickType::Pawn));
+            }
+            if point.row > 4 {
+                tiles[col][row] = Tile::Brick(Brick::PlayerBrick(Player::Two, BrickType::Pawn));
             }
         }
 
@@ -46,13 +44,13 @@ impl Board{
         }
     }
 
-    pub fn get_tile_points() -> [Point; 64] {
-        let mut points = [Point::new(0,0); 64];
-        let mut index = 0;
-        for col in 0..8 {
+    pub fn get_tile_points() -> [Point; 32] {
+        let mut points = [Point::new(0,0); 32];
+        for (index, col) in (0..8).enumerate() {
             for row in 0..8 {
-                points[index] = Point::new(col, row);
-                index += 1;
+                if (col + row) % 2 == 0 {
+                    points[index] = Point::new(col, row);
+                }
             }
         }
         return points;
