@@ -47,7 +47,7 @@ impl Board{
     pub fn get_tile_points() -> [Point; 32] {
         let mut points = [Point::new(0,0); 32];
         let mut index = 0;
-        for col in (0..8) {
+        for col in 0..8 {
             for row in 0..8 {
                 if (col + row) % 2 == 0 {
                     points[index] = Point::new(col, row);
