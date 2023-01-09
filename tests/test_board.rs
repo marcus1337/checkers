@@ -10,6 +10,6 @@ mod board_tests {
     fn make_board() {
         let board = Board::new();
         println!("{}", board);
-        //assert!(false);
+        assert!(false);
     }
 }
