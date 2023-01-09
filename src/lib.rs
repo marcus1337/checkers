@@ -37,14 +37,7 @@ impl Checkers{
 
     #[no_mangle]
     pub extern "C" fn checkers_get_result(&self) -> GameResult {
-        let actions = move_validator::get_valid_actions(&self.turn);
-        if actions.is_empty() {
-            match self.turn.player {
-                Player::One => return GameResult::TwoWin,
-                Player::Two => return GameResult::OneWin,
-            }
-        }
-        GameResult::OnGoing
+        self.turn.get_result()
     }
 
     #[no_mangle]
@@ -61,6 +54,7 @@ impl Checkers{
     pub extern "C" fn checkers_has_brick(&self, point: Point) -> bool {
         self.turn.board.has_brick(point)
     }
+    
     #[no_mangle]
     pub extern "C" fn checkers_get_brick(&self, point: Point) -> Brick {
         self.turn.board.get_brick(point)

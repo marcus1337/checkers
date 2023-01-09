@@ -6,6 +6,7 @@ use super::board::tile::Player;
 use super::board::Board;
 use super::board;
 use super::board::tile::Point;
+use super::board::GameResult;
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -64,6 +65,17 @@ impl Turn {
         if last_action.is_jump() && !Action::get_jump_actions(&self.board, last_action.to).is_empty() {
             self.potentially_last_jump_action = last_action;
         }
+    }
+
+    pub fn get_result(&self) -> GameResult {
+        let actions = move_validator::get_valid_actions(&self);
+        if actions.is_empty() {
+            match self.player {
+                Player::One => return GameResult::TwoWin,
+                Player::Two => return GameResult::OneWin,
+            }
+        }
+        GameResult::OnGoing
     }
 
 }
