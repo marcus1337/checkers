@@ -20,7 +20,10 @@ pub fn can_step(turn: &Turn, from: Point, direction: Direction) -> bool {
     let board = turn.board;
     let player = turn.player;
 
-    if !board.has_player_brick(from, player) || has_to_jump(turn) {
+    let mut to = from;
+    to.step(direction);
+
+    if !to.in_bounds() || !board.has_player_brick(from, player) || has_to_jump(turn) {
         return false;
     }
 
@@ -33,7 +36,10 @@ pub fn can_jump(turn: &Turn, from: Point, direction: Direction) -> bool {
     let board = turn.board;
     let player = turn.player;
 
-    if !board.has_player_brick(from, player) {
+    let mut to = from;
+    to.jump(direction);
+
+    if !to.in_bounds() || !board.has_player_brick(from, player) {
         return false;
     }
 

@@ -106,10 +106,10 @@ impl Point {
 
     pub fn step(&mut self, direction: Direction) {
         let direction_point = match direction {
-            Direction::NorthEast => Point::new(-1, 1),
-            Direction::NorthWest => Point::new(1, 1),
-            Direction::SouthEast => Point::new(-1, -1),
-            Direction::SouthWest => Point::new(1, -1),
+            Direction::NorthEast => Point::new(1, 1),
+            Direction::NorthWest => Point::new(-1, 1),
+            Direction::SouthEast => Point::new(1, -1),
+            Direction::SouthWest => Point::new(-1, -1),
         };
         *self += direction_point;
     }

@@ -94,6 +94,7 @@ impl Action{
         if self.is_promote() {
             board.place_brick(self.to, self.get_promote_brick());
         }
+        board.remove_brick(self.from);
     }
 
     pub fn new_null() -> Self {

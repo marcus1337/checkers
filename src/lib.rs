@@ -18,7 +18,7 @@ use ai::AI;
 
 #[repr(C)]
 pub struct Checkers {
-    turn: Turn,
+    pub turn: Turn,
 }
 
 impl Checkers{
