@@ -82,6 +82,10 @@ impl Checkers{
     #[no_mangle]
     pub extern "C" fn checkers_get_action(&self, from: Point, direction: Direction) -> Action {
         let actions = move_validator::get_valid_actions(&self.turn);
+        /*for action in &actions {
+            println!("{:?}", action);
+        }
+        println!("-------------- {:?}", self.turn.player);*/
         actions.iter().find(|&action| action.from == from && action.get_direction() == direction).unwrap().clone()
     }
 

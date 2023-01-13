@@ -43,7 +43,7 @@ impl Brick {
         }
     }
 
-    fn has_player(&self, player: Player) -> bool {
+    pub fn has_player(&self, player: Player) -> bool {
         match self {
             Brick::PlayerBrick(self_player, _) => self_player == &player,
         }

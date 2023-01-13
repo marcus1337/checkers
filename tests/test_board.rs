@@ -42,4 +42,20 @@ mod board_tests {
         assert_eq!(has_brick_to, true);
     }
 
+    #[test]
+    fn has_to_take_brick() {
+        let mut checkers = lib::Checkers::checkers_make();
+        let mut action = checkers.checkers_get_action(Point::new(0,2), Direction::NorthEast);
+        checkers.checkers_apply_action(action);
+        action = checkers.checkers_get_action(Point::new(1,5), Direction::SouthEast);
+        checkers.checkers_apply_action(action);
+
+        action = checkers.checkers_get_action(Point::new(6,2), Direction::NorthEast);
+        checkers.checkers_apply_action(action);
+
+        //println!("{}" , checkers.turn.board);
+        let can_move_non_take_brick = checkers.checkers_can_move(Point::new(7,5), Direction::SouthWest);
+        assert_eq!(false, can_move_non_take_brick);
+    }
+
 }

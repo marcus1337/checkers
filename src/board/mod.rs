@@ -58,6 +58,27 @@ impl Board{
         return points;
     }
 
+    pub fn get_occupied_tile_points(&self) -> Vec<Point> {
+        let mut points = Vec::new();
+        for point in Board::get_tile_points() {
+            if self.has_brick(point) {
+                points.push(point);
+            }
+        }
+        points
+    }
+
+    pub fn get_occupied_tile_points_by_player(&self, player: Player) -> Vec<Point> {
+        let mut points = Vec::new();
+        for point in self.get_occupied_tile_points() {
+            let brick = self.get_brick(point);
+            if brick.has_player(player) {
+                points.push(point);
+            }
+        }
+        points
+    }
+
     pub fn get_tile(&self, point: Point) -> Tile {
         self.tiles[point.col as usize][point.row as usize]
     }
