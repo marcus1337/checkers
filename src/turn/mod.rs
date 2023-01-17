@@ -43,7 +43,10 @@ impl Turn {
     pub fn apply_action(&mut self, action: Action) {
         action.apply(&mut self.board);
         self.set_last_jump_action(action);
-        if action.is_step() || Action::get_jump_actions(&self.board, action.to).is_empty() {
+
+        if action.is_promote() && !Action::get_jump_actions(&self.board, action.to).is_empty(){
+            return;
+        } else if action.is_step() || Action::get_jump_actions(&self.board, action.to).is_empty() {
             self.next();
         }
     }

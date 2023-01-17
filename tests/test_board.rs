@@ -9,6 +9,8 @@ use tile::Direction;
 
 #[cfg(test)]
 mod board_tests {
+    use board::tile::{BrickType, Player, Brick};
+
     use super::*;
 
     #[test]
@@ -20,7 +22,7 @@ mod board_tests {
 
     #[test]
     fn can_move_bricks() {
-        let mut checkers = lib::Checkers::checkers_make();
+        let checkers = lib::Checkers::checkers_make();
         let can_move_0_2_right = checkers.checkers_can_move(Point::new(0,2), Direction::NorthEast);
         let can_move_0_2_left = checkers.checkers_can_move(Point::new(0,2), Direction::NorthWest);
         assert_eq!(can_move_0_2_right, true);
@@ -53,9 +55,24 @@ mod board_tests {
         action = checkers.checkers_get_action(Point::new(6,2), Direction::NorthEast);
         checkers.checkers_apply_action(action);
 
-        //println!("{}" , checkers.turn.board);
         let can_move_non_take_brick = checkers.checkers_can_move(Point::new(7,5), Direction::SouthWest);
         assert_eq!(false, can_move_non_take_brick);
+    }
+
+    #[test]
+    fn has_to_take_brick_on_promote() {
+        let mut checkers = lib::Checkers::checkers_make();
+
+        for point in checkers.turn.board.get_occupied_tile_points(){
+            checkers.turn.board.remove_brick(point);
+        }
+        checkers.turn.board.place_brick(Point::new(0, 6), Brick::PlayerBrick(Player::One, BrickType::Pawn));
+        checkers.turn.board.place_brick(Point::new(2, 6), Brick::PlayerBrick(Player::Two, BrickType::Pawn));
+        let action1 = checkers.checkers_get_action(Point::new(0,6), Direction::NorthEast);
+        checkers.checkers_apply_action(action1);
+        let can_move_king = checkers.checkers_can_move(Point::new(1,7), Direction::SouthEast);
+        //println!("{}", checkers.turn.board);
+        assert_eq!(true, can_move_king);
     }
 
 }
