@@ -4,6 +4,8 @@ pub mod board;
 pub mod ai;
 pub mod action;
 pub mod turn;
+pub mod history;
+
 use self::turn::Turn;
 use self::action::Action;
 use self::turn::move_validator;
@@ -15,6 +17,8 @@ use board::GameResult;
 use board::tile::Player;
 use board::Board;
 use ai::AI;
+
+use history::History;
 
 #[repr(C)]
 pub struct Checkers {
@@ -33,6 +37,30 @@ impl Checkers{
     #[no_mangle]
     pub extern "C" fn checkers_reset(&mut self) {
         *self = Checkers::checkers_make();
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_can_undo(&self) -> bool {
+        self.turn.history.can_undo()
+    }
+    #[no_mangle]
+    pub extern "C" fn checkers_can_redo(&self) -> bool {
+        self.turn.history.can_redo()
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_get_last_action(&self) -> Action {
+        self.turn.history.get_action()
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_undo(&mut self) {
+        self.turn.undo();
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_redo(&mut self) {
+        self.turn.redo();
     }
 
     #[no_mangle]
@@ -76,13 +104,12 @@ impl Checkers{
 
     #[no_mangle]
     pub extern "C" fn checkers_can_move(&self, from: Point, direction: Direction) -> bool {
-        move_validator::can_step_or_jump(&self.turn, from, direction)
+        return self.turn.find_action(from, direction).is_some();
     }
 
     #[no_mangle]
     pub extern "C" fn checkers_get_action(&self, from: Point, direction: Direction) -> Action {
-        let actions = move_validator::get_valid_actions(&self.turn);
-        actions.iter().find(|&action| action.from == from && action.get_direction() == direction).unwrap().clone()
+        return self.turn.find_action(from, direction).unwrap().clone();
     }
 
     #[no_mangle]

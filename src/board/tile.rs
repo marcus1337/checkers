@@ -43,6 +43,12 @@ impl Brick {
         }
     }
 
+    pub fn get_player(&self) -> Player {
+        match self {
+            Brick::PlayerBrick(player, _) => player.clone(),
+        }
+    }
+
     pub fn has_player(&self, player: Player) -> bool {
         match self {
             Brick::PlayerBrick(self_player, _) => self_player == &player,

@@ -18,7 +18,7 @@ impl AI{
     }
 
     pub fn get_action(&self, turn: &Turn) -> Action {
-        let actions = move_validator::get_valid_actions(&turn);
+        let actions = turn.get_valid_actions();
         let mut rng = thread_rng();
         let random_action = actions.choose(&mut rng).unwrap();
         random_action.clone()

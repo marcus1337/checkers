@@ -1,62 +1,30 @@
 use super::board::tile::Direction;
 use super::board::tile::Point;
-//use super::board::Board;
 use super::Action;
-use super::Turn;
-use super::TurnState;
+use super::Player;
+use super::Board;
 
-fn can_jump_somewhere(turn: &Turn) -> bool {
-    for point in turn.board.get_occupied_tile_points_by_player(turn.player) {
-        if !Action::get_jump_actions(&turn.board, point).is_empty() {
-            return true;
-        }
-    }
-    false
-}
-
-fn has_to_jump(turn: &Turn) -> bool {
-    can_jump_somewhere(turn)
-}
-
-pub fn can_step_or_jump(turn: &Turn, from: Point, direction: Direction) -> bool {
-    if can_step(turn, from, direction) || can_jump(turn, from, direction) {
-        return true;
-    }
-    false
-}
-
-pub fn can_step(turn: &Turn, from: Point, direction: Direction) -> bool {
-    let board = turn.board;
-    let player = turn.player;
-
+fn can_step(board: &Board, from: Point, direction: Direction) -> bool {
     let mut to = from;
     to.step(direction);
-
-    if !to.in_bounds() || !board.has_player_brick(from, player) || has_to_jump(turn) {
+    if !to.in_bounds() || !board.has_brick(from) {
         return false;
     }
-
     Action::get_step_actions(&board, from)
         .iter()
         .any(|action| action.get_direction() == direction)
 }
 
-pub fn can_jump(turn: &Turn, from: Point, direction: Direction) -> bool {
-    let board = turn.board;
-    let player = turn.player;
-
+fn can_jump(board: &Board, from: Point, direction: Direction) -> bool {
+    let mut mid_point = from;
+    mid_point.step(direction);
     let mut to = from;
     to.jump(direction);
-
-    if !to.in_bounds() || !board.has_player_brick(from, player) {
+    if !to.in_bounds() || !board.has_brick(from) || !board.has_brick(mid_point) || board.has_brick(to) {
         return false;
     }
-
-    if has_to_jump(turn) && turn.get_state() == TurnState::InProgress {
-        let last_to_point = turn.get_jump_action_continuation_point();
-        if last_to_point != from {
-            return false;
-        }
+    if board.get_brick(mid_point).is_same_player(board.get_brick(from)) {
+        return false;
     }
 
     Action::get_jump_actions(&board, from)
@@ -64,25 +32,55 @@ pub fn can_jump(turn: &Turn, from: Point, direction: Direction) -> bool {
         .any(|action| action.get_direction() == direction)
 }
 
-pub fn get_valid_actions(turn: &Turn) -> Vec<Action> {
+fn get_step_actions(board: &Board, player: Player) -> Vec<Action> {
     let mut actions = Vec::new();
-
-    for from in turn.board.get_occupied_tile_points_by_player(turn.player) {
+    for from in board.get_occupied_tile_points_by_player(player) {
         for direction in Direction::all() {
-            if can_step(&turn, from, direction) {
+            if can_step(&board, from, direction) {
                 let mut to = from;
                 to.step(direction);
-                let action = Action::new(&turn.board, from, to);
-                actions.push(action);
-            }
-            if can_jump(&turn, from, direction) {
-                let mut to = from;
-                to.jump(direction);
-                let action = Action::new(&turn.board, from, to);
+                let action = Action::new(&board, from, to);
                 actions.push(action);
             }
         }
     }
-
     actions
 }
+
+fn get_jump_actions(board: &Board, player: Player) -> Vec<Action> {
+    let mut actions = Vec::new();
+    for from in board.get_occupied_tile_points_by_player(player) {
+        for direction in Direction::all() {
+            if can_jump(&board, from, direction) {
+                let mut to = from;
+                to.jump(direction);
+                let action = Action::new(&board, from, to);
+                actions.push(action);
+            }
+        }
+    }
+    actions
+}
+
+pub fn get_valid_start_actions(board: &Board, player: Player) -> Vec<Action> {
+    let jump_actions = get_jump_actions(board, player);
+    let step_actions = get_step_actions(board, player);
+    if !jump_actions.is_empty(){
+        return jump_actions;
+    }else{
+        return step_actions;
+    }
+}
+
+pub fn get_valid_continuation_actions(board: &Board, last_to: Point) -> Vec<Action> {
+    let player = board.get_brick(last_to).get_player();
+    let mut actions = Vec::new();
+    for action in get_jump_actions(board, player) {
+        if action.from == last_to {
+            actions.push(action);
+        }
+    }
+    actions
+}
+
+

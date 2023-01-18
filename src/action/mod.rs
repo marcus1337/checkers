@@ -14,6 +14,7 @@ pub struct Action{
     pub to: Point,
     pub from_brick: Brick,
     pub potentially_captured_brick: Brick,
+    pub ends_turn: bool,
 }
 
 
@@ -24,9 +25,14 @@ impl Action{
             to:to,
             from_brick: board.get_brick(from),
             potentially_captured_brick: board.get_brick(from),
+            ends_turn: true,
         };
+
         if action.is_jump() {
             action.potentially_captured_brick = board.get_brick(action.get_mid_point());
+            let mut board_copy = board.clone();
+            action.apply(&mut board_copy);
+            action.ends_turn = Action::get_jump_actions(&board_copy, to).is_empty();
         }
 
         action
@@ -86,8 +92,7 @@ impl Action{
     }
 
     pub fn apply(&self, board: &mut Board) {
-        let from_brick = board.get_brick(self.from);
-        board.place_brick(self.to, from_brick);
+        board.place_brick(self.to, self.from_brick);
         if self.is_jump() {
             board.remove_brick(self.get_mid_point());
         }
@@ -97,12 +102,22 @@ impl Action{
         board.remove_brick(self.from);
     }
 
+    pub fn revert(&self, board: &mut Board) {
+        if self.is_jump() {
+            let mid_point = self.get_mid_point();
+            board.place_brick(mid_point, self.potentially_captured_brick);
+        }
+        board.remove_brick(self.to);
+        board.place_brick(self.from, self.from_brick);
+    }
+
     pub fn new_null() -> Self {
         Self{
             from: Point::new(0, 0),
             to: Point::new(0, 0),
             from_brick: Brick::PlayerBrick(Player::One, BrickType::Pawn),
             potentially_captured_brick: Brick::PlayerBrick(Player::One, BrickType::Pawn),
+            ends_turn: false,
         }
     }
 

@@ -72,6 +72,23 @@ mod board_tests {
         checkers.checkers_apply_action(action1);
         let can_move_king = checkers.checkers_can_move(Point::new(1,7), Direction::SouthEast);
         //println!("{}", checkers.turn.board);
+        assert_eq!(false, can_move_king);
+    }
+
+    #[test]
+    fn has_to_take_brick_on_promote_capture() {
+        let mut checkers = lib::Checkers::checkers_make();
+
+        for point in checkers.turn.board.get_occupied_tile_points(){
+            checkers.turn.board.remove_brick(point);
+        }
+        checkers.turn.board.place_brick(Point::new(1, 5), Brick::PlayerBrick(Player::One, BrickType::Pawn));
+        checkers.turn.board.place_brick(Point::new(2, 6), Brick::PlayerBrick(Player::Two, BrickType::Pawn));
+        checkers.turn.board.place_brick(Point::new(4, 6), Brick::PlayerBrick(Player::Two, BrickType::Pawn));
+        let action1 = checkers.checkers_get_action(Point::new(1,5), Direction::NorthEast);
+        checkers.checkers_apply_action(action1);
+        let can_move_king = checkers.checkers_can_move(Point::new(3,7), Direction::SouthEast);
+        println!("{}", checkers.turn.board);
         assert_eq!(true, can_move_king);
     }
 
