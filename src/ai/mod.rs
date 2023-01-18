@@ -2,7 +2,6 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use super::Action;
-use super::turn::move_validator;
 use super::turn::Turn;
 
 pub struct AI {

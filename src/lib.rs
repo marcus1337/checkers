@@ -8,7 +8,6 @@ pub mod history;
 
 use self::turn::Turn;
 use self::action::Action;
-use self::turn::move_validator;
 use board::tile::BrickType;
 use board::tile::Point;
 use board::tile::Direction;
@@ -51,6 +50,16 @@ impl Checkers{
     #[no_mangle]
     pub extern "C" fn checkers_get_last_action(&self) -> Action {
         self.turn.history.get_action()
+    }
+
+    #[no_mangle]
+    pub extern "C" fn checkers_get_num_stored_actions(&self) -> i32 {
+        self.turn.history.get_num_actions()
+    }
+
+    #[no_mangle]
+    pub extern "C" fn get_stored_action(&self, action_number: i32) -> Action {
+        self.turn.history.get_action_at_index(action_number)
     }
 
     #[no_mangle]
