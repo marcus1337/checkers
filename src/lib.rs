@@ -129,6 +129,7 @@ impl Checkers{
     #[no_mangle]
     pub extern "C" fn checkers_apply_action(&mut self, action: Action) {
         self.turn.apply_action(action);
+        self.turn.history.add(action);
     }
 
 }

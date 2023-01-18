@@ -39,7 +39,6 @@ impl Turn {
         if action.ends_turn {
             self.next();
         }
-        self.history.add(action);
     }
 
     pub fn revert_action(&mut self, action: Action) {
@@ -51,13 +50,15 @@ impl Turn {
 
     pub fn undo(&mut self){
         let action = self.history.get_action();
+        println!("Undo {:?}", action);
         self.history.undo();
         self.revert_action(action);
     }
 
     pub fn redo(&mut self){
-        let action = self.history.get_action();
         self.history.redo();
+        let action = self.history.get_action();
+        println!("Redo {:?}", action);
         self.apply_action(action);
     }
 

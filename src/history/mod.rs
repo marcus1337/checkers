@@ -33,6 +33,7 @@ impl History{
 
     pub fn get_action(&self) -> Action {
         let previous_index = self.get_previous_index();
+        println!("get_action_index {}", previous_index);
         self.actions[previous_index as usize].clone()
     }
 
