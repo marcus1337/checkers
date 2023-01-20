@@ -8,6 +8,7 @@ use tile::Brick;
 use tile::BrickType;
 use tile::Player;
 
+#[allow(dead_code)]
 #[repr(C)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum GameResult {
@@ -87,14 +88,14 @@ impl Board{
         self.get_tile(point) != Tile::Empty
     }
 
-    pub fn has_player_brick(&self, point: Point, player: Player) -> bool {
+    /*pub fn has_player_brick(&self, point: Point, player: Player) -> bool {
         if !self.has_brick(point) {
             return false;
         }
         match self.get_brick(point) {
             Brick::PlayerBrick(p, _) => p == player,
         }
-    }
+    }*/
 
     pub fn get_brick(&self, point: Point) -> Brick {
         match self.get_tile(point) {

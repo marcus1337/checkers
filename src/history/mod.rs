@@ -36,9 +36,9 @@ impl History{
         self.actions[previous_index as usize].clone()
     }
 
-    pub fn is_empty(&self) -> bool {
+    /*pub fn is_empty(&self) -> bool {
         !self.can_undo() && !self.can_redo()
-    }
+    }*/
 
     pub fn undo(&mut self) {
         self.action_index = self.get_previous_index();
@@ -66,6 +66,14 @@ impl History{
     pub fn get_num_actions(&self) -> i32 {
         self.num_stored_redo_actions + self.num_stored_undo_actions
     }
+
+    /*pub fn get_num_undo_actions(&self) -> i32 {
+        self.num_stored_undo_actions
+    }
+
+    pub fn get_num_redo_actions(&self) -> i32 {
+        self.num_stored_redo_actions
+    }*/
 
     pub fn get_action_at_index(&self, action_number: i32) -> Action {
         let index_of_action_number = (self.get_index_offset() + action_number) % self.actions.len() as i32;

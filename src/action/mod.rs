@@ -121,8 +121,8 @@ impl Action{
         }
     }
 
-    pub fn is_null(&self) -> bool {
+    /*pub fn is_null(&self) -> bool {
         self.from == self.to
-    }
+    }*/
 
 }

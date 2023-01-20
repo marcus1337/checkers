@@ -1,15 +1,12 @@
 
 #[path = "../src/lib.rs"]
 mod lib;
-use lib::board::Board;
-use lib::board;
 use lib::board::tile;
 use tile::Point;
 use tile::Direction;
 
 #[cfg(test)]
 mod board_tests {
-    use board::tile::{BrickType, Player, Brick};
 
     use super::*;
 
