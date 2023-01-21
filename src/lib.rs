@@ -16,6 +16,7 @@ use board::GameResult;
 use board::tile::Player;
 use board::Board;
 use ai::AI;
+use ai::evaluate::Evaluator;
 
 use history::History;
 
@@ -123,7 +124,9 @@ impl Checkers{
 
     #[no_mangle]
     pub extern "C" fn checkers_get_ai_action(&self) -> Action {
-        AI::new().get_action(&self.turn)
+       // println!("score: {}",Evaluator::new(self.turn.board).get_score());
+        //AI::new().get_random_action(self.turn.clone())
+        AI::new().get_best_action(self.turn)
     }
 
     #[no_mangle]

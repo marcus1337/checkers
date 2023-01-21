@@ -92,4 +92,20 @@ mod board_tests {
         assert_eq!(true, can_move_king);
     }
 
+    #[test]
+    fn has_brick_after_remove() {
+        let mut checkers = lib::Checkers::checkers_make();
+        let mut board = checkers.turn.board.clone();
+
+        let point1 = Point::new(0, 0);
+        assert!(board.has_brick(point1));
+        board.remove_brick(point1);
+        assert!(!board.has_brick(point1));
+        board.place_brick(point1, Brick::PlayerBrick(Player::One, BrickType::King));
+        assert!(board.has_brick(point1));
+        board.place_brick(point1, Brick::PlayerBrick(Player::Two, BrickType::Pawn));
+        assert!(board.has_brick(point1));
+
+    }
+
 }

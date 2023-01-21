@@ -43,6 +43,18 @@ impl Brick {
         }
     }
 
+    pub fn is_pawn(&self) -> bool {
+        match self {
+            Brick::PlayerBrick(_, brick_type) => *brick_type == BrickType::Pawn,
+        }
+    }
+
+    pub fn is_king(&self) -> bool {
+        match self {
+            Brick::PlayerBrick(_, brick_type) => *brick_type == BrickType::King,
+        }
+    }
+
     pub fn get_player(&self) -> Player {
         match self {
             Brick::PlayerBrick(player, _) => player.clone(),

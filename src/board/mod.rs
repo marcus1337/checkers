@@ -100,7 +100,7 @@ impl Board{
     pub fn get_brick(&self, point: Point) -> Brick {
         match self.get_tile(point) {
             Tile::Brick(brick) => brick,
-            Tile::Empty => panic!("No brick at {:?}", point),
+            Tile::Empty => panic!("No brick at {:?} has_brick: {}", point, self.has_brick(point)),
         }
     }
 
