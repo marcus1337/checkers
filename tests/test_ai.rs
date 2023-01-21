@@ -22,8 +22,8 @@ mod board_tests {
         while game.checkers_get_result() == GameResult::OnGoing {
             let action = game.checkers_get_ai_action();
             game.checkers_apply_action(action);
-            if game.turn.board.get_occupied_tile_points_by_player(Player::One).len() < 5 || 
-                game.turn.board.get_occupied_tile_points_by_player(Player::Two).len() < 5 {
+            if game.turn.board.get_occupied_tile_points_by_player(Player::One).len() < 8 || 
+                game.turn.board.get_occupied_tile_points_by_player(Player::Two).len() < 8 {
                     break;
             }
         }

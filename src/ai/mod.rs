@@ -24,7 +24,7 @@ impl AI{
     }
 
     pub fn get_best_action(&self, turn: Turn) -> Action {
-        minimax::get_minimax_action(turn.clone(), 3)
+        minimax::get_minimax_action(turn.clone(), 8)
     }
 
     pub fn get_random_action(&self, turn: Turn) -> Action {
